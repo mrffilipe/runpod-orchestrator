@@ -12,18 +12,18 @@ namespace RunpodOrchestrator.Infrastructure.Services.PodLifecycle;
 public sealed class ManagedPodCleanupService : IManagedPodCleanupService
 {
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IManagedPodResolver _managedPodResolver;
+    private readonly IManagedPodCache _managedPodCache;
     private readonly RunPodOptions _options;
     private readonly ILogger<ManagedPodCleanupService> _logger;
 
     public ManagedPodCleanupService(
         IServiceScopeFactory scopeFactory,
-        IManagedPodResolver managedPodResolver,
+        IManagedPodCache managedPodCache,
         IOptions<RunPodOptions> options,
         ILogger<ManagedPodCleanupService> logger)
     {
         _scopeFactory = scopeFactory;
-        _managedPodResolver = managedPodResolver;
+        _managedPodCache = managedPodCache;
         _options = options.Value;
         _logger = logger;
     }
@@ -51,7 +51,7 @@ public sealed class ManagedPodCleanupService : IManagedPodCleanupService
         if (managedPods.Count == 0)
         {
             _logger.LogInformation("No managed pods named {PodName} found to terminate.", _options.PodName);
-            _managedPodResolver.InvalidateCache();
+            _managedPodCache.Invalidate();
             return;
         }
 
@@ -77,6 +77,6 @@ public sealed class ManagedPodCleanupService : IManagedPodCleanupService
             }
         }
 
-        _managedPodResolver.InvalidateCache();
+        _managedPodCache.Invalidate();
     }
 }

@@ -16,20 +16,21 @@ public sealed class ManagedPodResolver : IManagedPodResolver
         new(StringComparer.OrdinalIgnoreCase) { "High", "Medium", "Low" };
 
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IManagedPodCache _managedPodCache;
     private readonly IManagedPodCleanupService _managedPodCleanupService;
     private readonly RunPodOptions _options;
     private readonly ILogger<ManagedPodResolver> _logger;
     private readonly SemaphoreSlim _resolveSemaphore = new(1, 1);
 
-    private string? _cachedPodId;
-
     public ManagedPodResolver(
         IServiceScopeFactory scopeFactory,
+        IManagedPodCache managedPodCache,
         IManagedPodCleanupService managedPodCleanupService,
         IOptions<RunPodOptions> options,
         ILogger<ManagedPodResolver> logger)
     {
         _scopeFactory = scopeFactory;
+        _managedPodCache = managedPodCache;
         _managedPodCleanupService = managedPodCleanupService;
         _options = options.Value;
         _logger = logger;
@@ -37,28 +38,28 @@ public sealed class ManagedPodResolver : IManagedPodResolver
 
     public void InvalidateCache()
     {
-        _cachedPodId = null;
-        _logger.LogInformation("Managed pod cache invalidated.");
+        _managedPodCache.Invalidate();
     }
 
     public async Task<string> GetManagedPodIdAsync(CancellationToken ct = default)
     {
-        if (!string.IsNullOrWhiteSpace(_cachedPodId))
+        if (!string.IsNullOrWhiteSpace(_managedPodCache.CachedPodId))
         {
-            return _cachedPodId;
+            return _managedPodCache.CachedPodId;
         }
 
         await _resolveSemaphore.WaitAsync(ct).ConfigureAwait(false);
 
         try
         {
-            if (!string.IsNullOrWhiteSpace(_cachedPodId))
+            if (!string.IsNullOrWhiteSpace(_managedPodCache.CachedPodId))
             {
-                return _cachedPodId;
+                return _managedPodCache.CachedPodId;
             }
 
-            _cachedPodId = await ResolveManagedPodIdAsync(ct).ConfigureAwait(false);
-            return _cachedPodId;
+            var podId = await ResolveManagedPodIdAsync(ct).ConfigureAwait(false);
+            _managedPodCache.SetCachedPodId(podId);
+            return podId;
         }
         finally
         {

@@ -16,6 +16,7 @@ public static class PodLifecycleServiceExtensions
             client.Timeout = TimeSpan.FromSeconds(options.VllmHealthCheckTimeoutSeconds);
         });
 
+        services.AddSingleton<IManagedPodCache, ManagedPodCache>();
         services.AddSingleton<IManagedPodCleanupService, ManagedPodCleanupService>();
         services.AddSingleton<IVllmReadinessChecker, VllmReadinessChecker>();
         services.AddSingleton<IPodManagerService, PodManagerService>();
