@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="RunpodOrchestrator.API/RunpodOrchestrator.API.csproj" />
+  <Project Path="RunpodOrchestrator.Application/RunpodOrchestrator.Application.csproj" />
+  <Project Path="RunpodOrchestrator.Domain/RunpodOrchestrator.Domain.csproj" />
+  <Project Path="RunpodOrchestrator.Infrastructure/RunpodOrchestrator.Infrastructure.csproj" />
+</Solution>

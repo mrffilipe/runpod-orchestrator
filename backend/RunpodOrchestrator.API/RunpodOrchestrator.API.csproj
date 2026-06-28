@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>runpod-orchestrator-api-dev</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="10.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RunpodOrchestrator.Application\RunpodOrchestrator.Application.csproj" />
+    <ProjectReference Include="..\RunpodOrchestrator.Domain\RunpodOrchestrator.Domain.csproj" />
+    <ProjectReference Include="..\RunpodOrchestrator.Infrastructure\RunpodOrchestrator.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
